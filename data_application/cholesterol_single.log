@@ -1,0 +1,491 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.10.5)  4 APR 2020 17:21
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**cholesterol_single.tex
+(./cholesterol_single.tex
+LaTeX2e <2018-04-01> patch level 5
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 147.
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip43
+\fb@frw=\dimen105
+\fb@frh=\dimen106
+\FrameRule=\dimen107
+\FrameSep=\dimen108
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2018/04/16 v5.8 Page Geometry
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
+)
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2018/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen109
+\Gm@wd@mp=\dimen110
+\Gm@odd@mp=\dimen111
+\Gm@even@mp=\dimen112
+\Gm@layoutwidth=\dimen113
+\Gm@layoutheight=\dimen114
+\Gm@layouthoffset=\dimen115
+\Gm@layoutvoffset=\dimen116
+\Gm@dimlist=\toks15
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+(./cholesterol_single.aux)
+\openout1 = `cholesterol_single.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+
+(/usr/local/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count91
+\scratchdimen=\dimen117
+\scratchbox=\box26
+\nofMPsegments=\count92
+\nofMParguments=\count93
+\everyMPshowfont=\toks16
+\MPscratchCnt=\count94
+\MPscratchDim=\dimen118
+\MPnumerator=\count95
+\makeMPintoPDFobject=\count96
+\everyMPtoPDFconversion=\toks17
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+(/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(85.35826pt, 443.57848pt, 85.35826pt)
+* v-part:(T,H,B)=(85.35826pt, 624.25346pt, 85.35826pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=443.57848pt
+* \textheight=624.25346pt
+* \oddsidemargin=13.08827pt
+* \evensidemargin=13.08827pt
+* \topmargin=-23.91173pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 60.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 60.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 60.
+
+LaTeX Warning: No \author given.
+
+Package color Info: Redefining color shadecolor on input line 64.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 66.
+Package color Info: Redefining color shadecolor on input line 79.
+
+Overfull \hbox (2.66763pt too wide) in paragraph at lines 81--81
+[][]\OT1/cmtt/m/n/10 metadata[] []=[] []curatedMetagenomicData[][]([][]"QinJ_20
+12.marker_abundance.stool"[][],[] []dryrun[] []=[] []FALSE[][])[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 90.
+Package color Info: Redefining color shadecolor on input line 103.
+Package color Info: Redefining color shadecolor on input line 120.
+
+Overfull \hbox (2.66763pt too wide) in paragraph at lines 127--127
+[]                             []\OT1/cmtt/m/n/10 function[][]([][]x[][])[] []l
+ength[][]([][]unique[][](x))[][]>[][]min.samples,[] []logical[][]([][]1L[][]))]
+[][] 
+ []
+
+
+Overfull \hbox (28.9174pt too wide) in paragraph at lines 130--130
+[][]\OT1/cmtt/m/n/10 feature.list[] []=[] []lapply[][]([][]split[][]([][]as.lis
+t[][]([][]as.data.frame[][](qin.train[,[] []which[][]([][]![][]names[][](qin.tr
+ain)[] []%in%[][] 
+ []
+
+
+Overfull \hbox (70.91704pt too wide) in paragraph at lines 131--131
+[]                                                                      []\OT1/
+cmtt/m/n/10 c[][]([][]"cholesterol"[][],[] []"age"[][]))])),[][] 
+ []
+
+
+Overfull \hbox (39.41731pt too wide) in paragraph at lines 133--133
+[]                                                           []\OT1/cmtt/m/n/10
+ c[][]([][]"cholesterol"[][],[] []"age"[][]))]),[] []20[][])),[][] 
+ []
+
+
+Overfull \hbox (55.16718pt too wide) in paragraph at lines 135--135
+[][]\OT1/cmtt/m/n/10 weight.list[] []=[] []lapply[][](feature.list,[] []functio
+n[][]([][]x[][])[] []linear.correlation[][](qin.train[][]$[][]cholesterol[] []~
+[][]., x))[][] 
+ []
+
+
+Overfull \hbox (49.91722pt too wide) in paragraph at lines 141--141
+[][]\OT1/cmtt/m/n/10 qin.train[] []=[] []cbind[][](qin.train[,[] []which[][]([]
+[]names[][](qin.train)[] []%in%[] []c[][](weight.df[][]$[][]feature[[][]1[][]:[
+][]max.features],[][] 
+ []
+
+
+Overfull \hbox (49.91722pt too wide) in paragraph at lines 142--142
+[]                                                            []\OT1/cmtt/m/n/1
+0 c[][]([][]"cholesterol"[][],[] []"age"[][])))], group)[][] 
+ []
+
+
+Overfull \hbox (2.66763pt too wide) in paragraph at lines 143--143
+[][]\OT1/cmtt/m/n/10 qin.test[] []=[] []qin.test[,[] []which[][]([][]names[][](
+qin.test)[] []%in%[] []c[][](weight.df[][]$[][]feature[[][]1[][]:[][]max.featur
+es],[][] 
+ []
+
+
+Overfull \hbox (7.91759pt too wide) in paragraph at lines 144--144
+[]                                                   []\OT1/cmtt/m/n/10 c[][]([
+][]"cholesterol"[][],[] []"age"[][],[] []"group"[][])))][][] 
+ []
+
+[1
+
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Package color Info: Redefining color shadecolor on input line 151.
+Package color Info: Redefining color shadecolor on input line 165.
+
+Overfull \hbox (49.91722pt too wide) in paragraph at lines 172--172
+[]                                []\OT1/cmtt/m/n/10 paste0[][]([][]unique[][](
+[][]names[][](train)[feature.cols]),[] []collapse[][]=[][]"+"[][]),[] []"+"[][]
+,[][] 
+ []
+
+
+Overfull \hbox (81.41695pt too wide) in paragraph at lines 173--173
+[]                                []\OT1/cmtt/m/n/10 paste0[][]([][]"(0+"[][],[
+] []names[][](train)[feature.cols],[] []"|group)"[][],[] []collapse[][]=[][]"+"
+[][])))[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 197.
+[2]
+Package color Info: Redefining color shadecolor on input line 218.
+
+Overfull \hbox (18.4175pt too wide) in paragraph at lines 224--224
+[]                            []\OT1/cmtt/m/n/10 intercept[][]=T,[] []lambda[][
+]=[][]2[][]^[][]seq[][]([][]-[][]8[][],[] []8[][],[] []length[][]=[][]100[][]),
+[] []standardize[][]=F)[][] 
+ []
+
+
+Overfull \hbox (34.16736pt too wide) in paragraph at lines 225--225
+[][]\OT1/cmtt/m/n/10 sd.y[] []=[] []sqrt[][]([][]var[][](train[][]$[][]choleste
+rol)[][]*[][]([][]length[][](train[][]$[][]cholesterol)[][]-[][]1[][])[][]/[][]
+length[][](train[][]$[][]cholesterol))[][] 
+ []
+
+
+Overfull \hbox (896.89597pt too wide) in paragraph at lines 226--226
+[][]\OT1/cmtt/m/it/10 # compute regularization parameter for formulation of rid
+ge regression objective function assumed by transition_point_fns.R (https://sta
+ts.stackexchange.com/questions/129179/why-is-glmnet-ridge-regression-giving-me-
+a-different-answer-than-manual-calculat)[][] 
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 231
+.
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 231.
+
+Overfull \hbox (76.16699pt too wide) in paragraph at lines 239--239
+[]  []\OT1/cmtt/m/n/10 sd.y[] []=[] []sqrt[][]([][]var[][](dataset[][]$[][]chol
+esterol)[][]*[][]([][]length[][](dataset[][]$[][]cholesterol)[][]-[][]1[][])[][
+]/[][]length[][](dataset[][]$[][]cholesterol))[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 249.
+Package color Info: Redefining color shadecolor on input line 265.
+
+Overfull \hbox (2.66763pt too wide) in paragraph at lines 271--271
+[][]\OT1/cmtt/m/n/10 pred.ridge.merged[] []=[] []predict[][](fit.ridge.merged,[
+] []newx[][]=[][]data.matrix[][](test)[, feature.cols])[][] 
+ []
+
+[3]
+Package color Info: Redefining color shadecolor on input line 283.
+
+Overfull \hbox (13.16754pt too wide) in paragraph at lines 293--293
+[][]\OT1/cmtt/m/n/10 ls.bounds[] []=[] []tau_ls_range[][](edat_train2, edat_tes
+t2, wk.eq, sigma.eps,[] []cols_re_list[][]=clist)[][] 
+ []
+
+
+Overfull \hbox (55.16718pt too wide) in paragraph at lines 300--300
+[][]\OT1/cmtt/m/n/10 ridge.bounds[] []=[] []tau_r_range[][](edat_train2, edat_t
+est2, wk.eq, sigma.eps,[] []lambda[][]=lam,[] []lambdak[][]=lamk,[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 325.
+
+Overfull \hbox (76.16699pt too wide) in paragraph at lines 345--345
+[]  []\OT1/cmtt/m/n/10 sd.y[] []=[] []sqrt[][]([][]var[][](dataset[][]$[][]chol
+esterol)[][]*[][]([][]length[][](dataset[][]$[][]cholesterol)[][]-[][]1[][])[][
+]/[][]length[][](dataset[][]$[][]cholesterol))[][] 
+ []
+
+
+Overfull \hbox (175.91612pt too wide) in paragraph at lines 378--378
+[][]\OT1/cmtt/m/n/10 wk.ridge[] []=[] []optimal_weights_ridge[][](edat_train2, 
+edat_test2, sigma.eps, vec.re, lamk,[] []summary[][](fit.lmer)[][]$[][]coeffici
+ents[,[][]1[][]])[][] 
+ []
+
+[4]
+Package color Info: Redefining color shadecolor on input line 391.
+
+Overfull \hbox (7.91759pt too wide) in paragraph at lines 399--399
+[]  []\OT1/cmtt/m/n/10 ind.boot[] []=[] []sample[][]([][]1[][]:[][]length[][](p
+red.ridge.merged),[] []length[][](pred.ridge.merged),[] []replace[][]=T)[][] 
+ []
+
+
+Overfull \hbox (238.91557pt too wide) in paragraph at lines 403--403
+[]  []\OT1/cmtt/m/n/10 wk.ridge.boot[] []=[] []optimal_weights_ridge[][](edat_t
+rain2, edat_test2.boot, sigma.eps, vec.re, lamk,[] []summary[][](fit.lmer)[][]$
+[][]coefficients[,[][]1[][]])[][] 
+ []
+
+
+Overfull \hbox (28.9174pt too wide) in paragraph at lines 404--404
+[]  []\OT1/cmtt/m/n/10 err.ridge[][]$[][]merged[i][] []=[] []mean[][]((pred.rid
+ge.merged[ind.boot][] []-[] []test[][]$[][]cholesterol[ind.boot])[][]^[][]2[][]
+)[][] 
+ []
+
+
+Overfull \hbox (13.16754pt too wide) in paragraph at lines 405--405
+[]  []\OT1/cmtt/m/n/10 err.ridge[][]$[][]csl[i][] []=[] []mean[][]((pred.ridge.
+csl.eq[ind.boot][] []-[] []test[][]$[][]cholesterol[ind.boot])[][]^[][]2[][])[]
+[] 
+ []
+
+
+Overfull \hbox (97.16681pt too wide) in paragraph at lines 406--406
+[]  []\OT1/cmtt/m/n/10 err.ridge[][]$[][]csl.opt[i][] []=[] []mean[][]((wk.ridg
+e.boot[] []%*%[] []ridge.mat[, ind.boot][] []-[] []test[][]$[][]cholesterol[ind
+.boot])[][]^[][]2[][])[][] 
+ []
+
+
+Overfull \hbox (7.91759pt too wide) in paragraph at lines 407--407
+[]  []\OT1/cmtt/m/n/10 err.ols[][]$[][]merged[i][] []=[] []mean[][]((pred.ols.m
+erged[ind.boot][] []-[] []test[][]$[][]cholesterol[ind.boot])[][]^[][]2[][])[][
+] 
+ []
+
+
+Overfull \hbox (65.66708pt too wide) in paragraph at lines 409--409
+[]  []\OT1/cmtt/m/n/10 err.ols[][]$[][]csl.opt[i][] []=[] []mean[][]((wk.ols.bo
+ot[] []%*%[] []ols.mat[, ind.boot][] []-[] []test[][]$[][]cholesterol[ind.boot]
+)[][]^[][]2[][])[][] 
+ []
+
+[5]
+Package color Info: Redefining color shadecolor on input line 418.
+
+Overfull \hbox (34.16736pt too wide) in paragraph at lines 433--433
+[][]\OT1/cmtt/m/n/10 err2[][]$[][]type[[][]which[][](err2[][]$[][]Learner[] []%
+in%[] []c[][]([][]"LS,E (O)"[][],[] []"R,E (O)"[][]))][] []=[] []"Ensemble (opt
+imal weights)"[][] 
+ []
+
+
+Overfull \hbox (433.16388pt too wide) in paragraph at lines 435--435
+[][]\OT1/cmtt/m/n/10 ggplot[][](err2,[] []aes[][](^^RRegression Model^^R, RMSPE
+,[] []fill[][]=^^RMulti-Study Approach^^R))[] []+[] []geom_boxplot[][]()[] []+[
+] []theme[][]([][]text[] []=[] []element_text[][]([][]size[] []=[] []14[][]))[]
+ []+[] []scale_fill_brewer[][]([][]palette[][]=[][]"Greys"[][])[][] 
+ []
+
+<figure/unnamed-chunk-15-1.pdf, id=23, 361.35pt x 216.81pt>
+File: figure/unnamed-chunk-15-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-15-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-15-1.pdf  used on input line 439.
+
+(pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
+
+Overfull \hbox (433.16388pt too wide) in paragraph at lines 448--448
+[][]\OT1/cmtt/m/n/10 ggplot[][](err2,[] []aes[][](^^RRegression Model^^R, RMSPE
+,[] []fill[][]=^^RMulti-Study Approach^^R))[] []+[] []geom_boxplot[][]()[] []+[
+] []theme[][]([][]text[] []=[] []element_text[][]([][]size[] []=[] []14[][]))[]
+ []+[] []scale_fill_brewer[][]([][]palette[][]=[][]"Greys"[][])[][] 
+ []
+
+[6 <./figure/unnamed-chunk-15-1.pdf>] [7] (./cholesterol_single.aux) ) 
+Here is how much of TeX's memory you used:
+ 2090 strings out of 492639
+ 30839 string characters out of 6129302
+ 113047 words of memory out of 5000000
+ 5956 multiletter control sequences out of 15000+600000
+ 7011 words of font info for 26 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 41i,6n,32p,425b,278s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/t
+exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on cholesterol_single.pdf (7 pages, 83028 bytes).
+PDF statistics:
+ 54 PDF objects out of 1000 (max. 8388607)
+ 37 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+

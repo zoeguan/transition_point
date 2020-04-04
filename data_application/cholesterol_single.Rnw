@@ -8,7 +8,7 @@
 knitr::opts_chunk$set(warning=F, message=F, tidy=T)
 @
 
-\title{curatedMetagenomicData Data Application - Scenario 2}
+\title{curatedMetagenomicData Data Application - Scenario 1}
 \date{}
 \maketitle
 
@@ -25,64 +25,66 @@ library(lme4)
 
 Load data.
 <<>>=
-metadata = curatedMetagenomicData(paste0(c("KarlssonFH_2013.",
-                          "Heitz-BuschartA_2016.",
-                          "QinJ_2012."), "marker_abundance.stool"), dryrun = FALSE) 
+metadata = curatedMetagenomicData("QinJ_2012.marker_abundance.stool", dryrun = FALSE) 
 meta.merged = mergeData(metadata)
-meta.exp = data.frame(t(exprs(meta.merged)))
 rm(list=c("metadata"))
 @
 
 Add clinical variables to marker abundance data and restrict to female patients.
 <<>>=
-meta.exp = meta.exp[, which(colSums(meta.exp)!=0)]
-# remove features that are very sparse in the training data
-min.samples = floor(length(which(meta.merged$studyID=="KarlssonFH_2013.marker_abundance.stool" & 
-                                   meta.merged$gender=="female"))/10)
-meta.exp = meta.exp[vapply(meta.exp, function(x) 
-  length(unique(x[which(meta.merged$studyID=="KarlssonFH_2013.marker_abundance.stool" & 
-                          meta.merged$gender=="female")]))>min.samples & 
-    length(unique(x[which(meta.merged$studyID=="QinJ_2012.marker_abundance.stool" & 
-                            meta.merged$gender=="female")]))>min.samples, logical(1L))]
+meta.exp = data.frame(t(exprs(meta.merged)))
 meta.exp$cholesterol = meta.merged$cholesterol 
 meta.exp$age = meta.merged$age
-meta.exp$group = as.numeric(as.factor(meta.merged$studyID))
-meta.exp = meta.exp[which(meta.merged$gender=="female"), ]
+meta.exp = meta.exp[which(meta.merged$gender=="female"),]
 meta.exp = meta.exp[complete.cases(meta.exp),]
 @
 
 Divide dataset into training and test sets.
 <<>>=
-meta.train = meta.exp[which(meta.exp$group %in% 2:3),]
-meta.test = meta.exp[which(meta.exp$group %in% 1),]
+set.seed(123)
+# number of training datasets
+ndat = 4
+ind.train = sample(1:nrow(meta.exp), ceiling(nrow(meta.exp)*(ndat)/(ndat+1)))
+qin.train = meta.exp[ind.train,]
+qin.test = meta.exp[-ind.train,]
+qin.train$group = sample(1:ndat, nrow(qin.train), replace=T)
+qin.test$group = ndat+1
+group = qin.train$group
 @
 
-Use the top 20 marker abundances most highly correlated with the outcome in the training set as the predictors.
+Use the top 5 marker abundances most highly correlated with the outcome in the training set as the predictors.
 <<>>=
-feature.list = lapply(split(as.list(as.data.frame(meta.train[, which(!names(meta.train) %in% 
-                                                                       c("cholesterol", "age", 
-                                                                         "group"))])), 
-                            cut(1:ncol(meta.train[, which(!names(meta.train) %in% 
-                                                            c("cholesterol", "age", "group"))]), 20)), 
+qin.train = qin.train[, which(colSums(qin.train)!=0)]
+
+# remove features that are very sparse in the training data
+min.samples = 4
+qin.train = qin.train[vapply(qin.train, 
+                             function(x) length(unique(x))>min.samples, logical(1L))]
+
+# calculate correlation for each feature
+feature.list = lapply(split(as.list(as.data.frame(qin.train[, which(!names(qin.train) %in% 
+                                                                      c("cholesterol", "age"))])), 
+                            cut(1:ncol(qin.train[, which(!names(qin.train) %in% 
+                                                           c("cholesterol", "age"))]), 20)), 
                       as.data.frame)
-weight.list = lapply(feature.list, function(x) linear.correlation(meta.train$cholesterol ~., x))
+weight.list = lapply(feature.list, function(x) linear.correlation(qin.train$cholesterol ~., x))
 weight.df = rbind.fill(weight.list)
 weight.df$feature = unlist(lapply(weight.list, row.names))
 weight.df = weight.df[order(weight.df$attr_importance, decreasing = T), ]
-max.features = 20
-meta.train = meta.train[, which(names(meta.train) %in% c(weight.df$feature[1:max.features], 
-                                                         c("cholesterol", "age", "group")))]
-meta.test = meta.test[, which(names(meta.test) %in% c(weight.df$feature[1:max.features], 
-                                                      c("cholesterol", "age", "group")))]
+# get top 5 features
+max.features = 5
+qin.train = cbind(qin.train[, which(names(qin.train) %in% c(weight.df$feature[1:max.features], 
+                                                            c("cholesterol", "age")))], group)
+qin.test = qin.test[, which(names(qin.test) %in% c(weight.df$feature[1:max.features], 
+                                                   c("cholesterol", "age", "group")))]
 @
 
 Set up design matrices.
 <<>>=
-ndat = 2
-meta.all = rbind(meta.train, meta.test)
-parts = split(meta.all, meta.all$group)
-edat_train = parts[2:3]
-edat_test = parts[1]
+qin.all = rbind(qin.train, qin.test)
+parts = split(qin.all, qin.all$group)
+edat_train = parts[1:ndat]
+edat_test = parts[ndat+1]
 train = rbindlist(edat_train)
 test = rbindlist(edat_test)
 @
@@ -108,10 +110,11 @@ sigma2.bar
 
 Estimate optimal LS weights.
 <<>>=
-source("transition_point_fns.R")
-parts2 = split(cbind(rep(1, nrow(meta.all)), meta.all[, feature.cols]), meta.all$group)
-edat_train2 = parts2[2:3]
-edat_test2 = parts2[1]
+source("../simulations/transition_point_fns.R")
+parts2 = split(cbind(rep(1, nrow(qin.all)), qin.all[, feature.cols]), 
+               qin.all$group)
+edat_train2 = parts2[1:ndat]
+edat_test2 = parts2[ndat+1]
 
 # estimate optimal LS weights
 vec.re = sqrt(as.data.frame(VarCorr(fit.lmer))[1:(length(feature.cols)+1), 4])
@@ -139,7 +142,7 @@ for (i in 1:ndat) {
   cv.ridge = cv.glmnet(data.matrix(dataset)[, feature.cols], dataset$cholesterol, 
                        alpha = 0,
                        intercept=T, lambda=2^seq(-8, 8, length=100),
-                       standardize=F)
+                       standardize=F, nfolds=5)
   sd.y = sqrt(var(dataset$cholesterol)*(length(dataset$cholesterol)-1)/length(dataset$cholesterol))
   lamk[i] = cv.ridge$lambda.min*nrow(dataset)/sd.y
 }
@@ -153,6 +156,7 @@ pred.ols.merged = predict(fit.ols.merged, newdata=test)
 err.ols.merged = mean((pred.ols.merged-test$cholesterol)^2)
 sqrt(err.ols.merged)
 @
+
 
 Train and validate merged ridge regression model.
 <<>>=
@@ -173,22 +177,25 @@ if (as.data.frame(VarCorr(fit.lmer))[1, 4] > tol) {
 
 clist = as.list(ind.re+1)
 
-ls.bounds = tau_ls_range(edat_train2, edat_test2, wk.ols, sigma.eps, cols_re_list=clist)
+wk.eq = rep(1, ndat)/ndat
+
+ls.bounds = tau_ls_range(edat_train2, edat_test2, wk.eq, sigma.eps, cols_re_list=clist)
 ls.bounds
 
-ridge.bounds = tau_r_range(edat_train2, edat_test2, wk.ols, sigma.eps, lambda=lam, lambdak=lamk,  
+ridge.bounds = tau_r_range(edat_train2, edat_test2, wk.eq, sigma.eps, lambda=lam, lambdak=lamk,  
                            beta=fit.ols.merged$coefficients, cols_re_list=clist)
 ridge.bounds
 
-sigma2.bar > ls.bounds[2]
-sigma2.bar > ridge.bounds[2]
+sigma2.bar < ls.bounds[1]
+sigma2.bar < ridge.bounds[1]
 @
-
 
 
 Train and validate CSLs.
 <<>>=
 beta.ols.mat = matrix(data=NA, nrow=ndat, ncol=length(fit.ols.merged$coefficients))
+beta.ols.mat.opt = beta.ols.mat
+
 beta.ridge.mat = beta.ols.mat
 ols.mat = matrix(data=NA, nrow=ndat, ncol=nrow(test))
 ridge.mat = ols.mat
@@ -213,11 +220,20 @@ for (i in 1:ndat) {
   ridge.mat[i, ] = predict(fit.ridge, newx=data.matrix(test)[, feature.cols])
 }
 
+pred.ols.csl.eq = wk.eq %*% ols.mat
+err.ols.csl.eq = mean((pred.ols.csl.eq-test$cholesterol)^2)
+sqrt(err.ols.csl.eq)
+
 pred.ols.csl = wk.ols %*% ols.mat
 err.ols.csl = mean((pred.ols.csl-test$cholesterol)^2)
 sqrt(err.ols.csl)
 
-pred.ridge.csl = wk.ols %*% ridge.mat
+pred.ridge.csl.eq = wk.eq %*% ridge.mat
+err.ridge.csl.eq = mean((pred.ridge.csl.eq-test$cholesterol)^2)
+sqrt(err.ridge.csl.eq)
+
+wk.ridge = optimal_weights_ridge(edat_train2, edat_test2, sigma.eps, vec.re, lamk, summary(fit.lmer)$coefficients[,1])
+pred.ridge.csl = wk.ridge %*% ridge.mat
 err.ridge.csl = mean((pred.ridge.csl-test$cholesterol)^2)
 sqrt(err.ridge.csl)
 @
@@ -227,16 +243,22 @@ Get bootstrap confidence intervals for prediction error.
 nboot = 500
 
 set.seed(1)
-err.ridge = data.frame(merged=rep(NA, nboot), csl=NA)
-err.ols = data.frame(merged=rep(NA, nboot), csl=NA)
+err.ridge = data.frame(merged=rep(NA, nboot), csl=NA, csl.opt=NA)
+err.ols = data.frame(merged=rep(NA, nboot), csl=NA, csl.opt=NA)
 for (i in 1:nboot) {
   ind.boot = sample(1:length(pred.ridge.merged), length(pred.ridge.merged), replace=T)
+  edat_test2.boot = edat_test2
+  edat_test2.boot[[1]] = edat_test2.boot[[1]][ind.boot,]
+  wk.ols.boot = optimal_weights(edat_train2, edat_test2.boot, sigma.eps, vec.re)
+  wk.ridge.boot = optimal_weights_ridge(edat_train2, edat_test2.boot, sigma.eps, vec.re, lamk, summary(fit.lmer)$coefficients[,1])
   err.ridge$merged[i] = mean((pred.ridge.merged[ind.boot] - test$cholesterol[ind.boot])^2)
-  err.ridge$csl[i] = mean((pred.ridge.csl[ind.boot] - test$cholesterol[ind.boot])^2)
+  err.ridge$csl[i] = mean((pred.ridge.csl.eq[ind.boot] - test$cholesterol[ind.boot])^2)
+  err.ridge$csl.opt[i] = mean((wk.ridge.boot %*% ridge.mat[, ind.boot] - test$cholesterol[ind.boot])^2)
   err.ols$merged[i] = mean((pred.ols.merged[ind.boot] - test$cholesterol[ind.boot])^2)
-  err.ols$csl[i] = mean((pred.ols.csl[ind.boot] - test$cholesterol[ind.boot])^2)
+  err.ols$csl[i] = mean((pred.ols.csl.eq[ind.boot] - test$cholesterol[ind.boot])^2)
+  err.ols$csl.opt[i] = mean((wk.ols.boot %*% ols.mat[, ind.boot] - test$cholesterol[ind.boot])^2)
 }
-save(err.ridge, err.ols, file="cholesterol_multi.RData")
+save(err.ridge, err.ols, file="cholesterol_single.RData")
 @
 
 Make boxplots of prediction error.
@@ -246,16 +268,22 @@ library(reshape2)
 
 err.ridge = sqrt(err.ridge)
 err.ols = sqrt(err.ols)
-names(err.ridge) = c("R,M", "R,C")
-names(err.ols) = c("LS,M", "LS,C")
+names(err.ridge) = c("R,M", "R,E", "R,E (O)")
+names(err.ols) = c("LS,M", "LS,E", "LS,E (O)")
 err2 = melt(cbind(err.ols, err.ridge))
 names(err2) = c("Learner", "RMSPE")
-ggplot(err2, aes(Learner, RMSPE)) + geom_boxplot() + theme(text = element_text(size = 14)) 
+err2$model = "Least Squares"
+err2$model[which(err2$Learner %in% c("R,M", "R,E", "R,E (O)"))] = "Ridge"
+err2$type = "Ensemble (equal weights)"
+err2$type[which(err2$Learner %in% c("LS,M", "R,M"))] = "Merged"
+err2$type[which(err2$Learner %in% c("LS,E (O)", "R,E (O)"))] = "Ensemble (optimal weights)"
+names(err2) = c("Learner", "RMSPE", "Regression Model", "Multi-Study Approach")
+ggplot(err2, aes(`Regression Model`, RMSPE, fill=`Multi-Study Approach`)) + geom_boxplot() + theme(text = element_text(size = 14)) + scale_fill_brewer(palette="Greys")
 
 # save figure
 library(gridExtra)
-png('rmse_scenario2.png', width=800, height=500, res=100)
-ggplot(err2, aes(Learner, RMSPE)) + geom_boxplot() + theme(text = element_text(size = 14)) 
+png('rmse_scenario1.png', width=800, height=500, res=100)
+ggplot(err2, aes(`Regression Model`, RMSPE, fill=`Multi-Study Approach`)) + geom_boxplot() + theme(text = element_text(size = 14)) + scale_fill_brewer(palette="Greys")
 dev.off()
 @
 
