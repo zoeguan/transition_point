@@ -43,7 +43,7 @@ for (j in ind) {
                            mtry=mtry, mtryk=mtryk,
                            size=size, sizek=sizek,
                            decay=decay, decayk=decayk,
-                           me=F, ma=F, ranfor=T, nn=T, n_cores=8)
+                           me=T, ma=T, ranfor=F, nn=F, n_cores=4)
   err[j, ] = colMeans(results[[j]])
   print(err[j, ])
 }
@@ -51,9 +51,7 @@ for (j in ind) {
 
 save(err, results, sigma.vals, sigma2_bar, sigma2_star,
      sigma2_bar.ridge, sigma2_star.ridge,
-     file="transition_point_thm1.RData")
-
-
+     file="transition_point_thm1_lme.RData")
 
 
 

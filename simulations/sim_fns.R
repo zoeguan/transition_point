@@ -10,10 +10,11 @@ library(nnet)
 library(metafor)
 library(doMC)
 library(parallel)
-library(sandwich)
-library(lmtest)
+#library(sandwich)
+#library(lmtest)
 library(matrixStats)
 library(mvmeta)
+library(MASS)
 
 ### function to sample datasets
 # edat_orig: list of datasets
@@ -36,7 +37,8 @@ init_data <- function(edat_orig, ndat, nvar){
 ### function to calculate prediction error for various models for a given value of sigma_re
 # edat_train: list of design matrices for training datasets
 # edat_test: list of design matrices for test datasets 
-# beta: vector of coefficients
+# f_train: f(X_k), true mean of Y_k (X_k %*% beta in old simulations)
+# f_test: f(X_0), true mean of Y_0 (X_0 %*% beta in old simulations)
 # sigma_re: vector where entry i is the square root of the variance of the random effect for predictor i (if predictor i does not have a random effect, then set the corresponding entry to 0; can also provide a single number instead of the vector if all predictors have random effects with the same variance)
 # sigma_eps: square root of variance of residual errors
 # wk: vector of weights for CSL
@@ -57,7 +59,9 @@ init_data <- function(edat_orig, ndat, nvar){
 # nn: whether or not to fit a neural network
 # ols: whether or not to fit OLS
 # maxWeights: maximum number of weights for neural network
-sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
+# correlated_re: 0 if random effects uncorrelated; -1 if negatively correlated and 1 if positively correlated
+# opt_wk: whether to estimate optimal weights for least squares and ridge regression
+sim_rep_np = function(edat_train, edat_test, f_train, f_test, Z_train, Z_test, sigma_re, sigma_eps, wk,
                    standardize=F, 
                    lambda_lasso=1, lambdak_lasso=1, 
                    lambda_ridge=1, lambdak_ridge=1, 
@@ -65,13 +69,13 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
                    mtry=5, mtryk=5,
                    me=F, ma=F,
                    ranfor=T, nn=T,
-                   ols=T, maxWeights=1000) {
+                   ols=T, maxWeights=1000, correlated_re=0, opt_wk=F) {
   
   intercept = F
   intercept_re = F
   if (all(edat_train[[1]][,1]==1)) {
     intercept = T
-    if (1 %in% cols_re) {
+    if (all(Z_train[[1]][,1]==1)) {
       intercept_re = T
     }
   }
@@ -93,29 +97,54 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
   }
   
   # generate outcomes for training data
+  # y_k = f(x_k) + z_k gamma_k + eps_k
   edat_sim = edat_train
-  for (i in 1:length(edat_train)) {
-    dataset = edat_train[[i]]
-    gamma = rnorm(nvar, 0, sigma_re)
+  for (k in 1:length(edat_train)) {
+    dataset = edat_train[[k]]
+    f_k = as.matrix(f_train[[k]])
+    Z_k = as.matrix(Z_train[[k]])
+    gamma = rnorm(ncol(Z_k), 0, sigma_re)
+    # make random effects correlated if needed
+    if (correlated_re %in% 1) {
+      sigma.mat = diag(sigma_re) + 0.25*min(sigma_re)
+      diag(sigma.mat) = sigma_re
+      gamma = mvrnorm(n=1, mu=rep(0, ncol(Z_k)), Sigma=sigma.mat)
+    } else if (correlated_re %in% -1) {
+      sigma.mat = - diag(sigma_re) - 0.25*min(sigma_re)
+      diag(sigma.mat) = sigma_re
+      gamma = mvrnorm(n=1, mu=rep(0, ncol(Z_k)), Sigma=sigma.mat)
+    }
     eps = rnorm(nrow(dataset), 0, sigma_eps)
-    dataset$y = as.matrix(dataset)[, 1:nvar] %*% beta + 
-      as.matrix(dataset)[, 1:nvar] %*% gamma +
+    dataset$y = f_k + 
+      Z_k %*% gamma +
       eps 
-    dataset$study = i
-    edat_sim[[i]] = dataset
+    dataset$study = k
+    edat_sim[[k]] = dataset
   }
   
   # generate outcomes for test data
   edat_sim_test = edat_test
-  for (i in 1:length(edat_test)) {
-    dataset = edat_test[[i]]
-    gamma2 = rnorm(nvar, 0, sigma_re)
+  for (k in 1:length(edat_test)) {
+    dataset = edat_test[[k]]
+    f_0 = as.matrix(f_test[[k]])
+    Z_0 = as.matrix(Z_test[[k]])
+    gamma2 = rnorm(ncol(Z_k), 0, sigma_re)
+    # make random effects correlated if needed
+    if (correlated_re %in% 1) {
+      sigma.mat = diag(sigma_re) + 0.25*min(sigma_re)
+      diag(sigma.mat) = sigma_re
+      gamma2 = mvrnorm(n=1, mu=rep(0, ncol(Z_k)), Sigma=sigma.mat)
+    } else if (correlated_re %in% -1) {
+      sigma.mat = - diag(sigma_re) - 0.25*min(sigma_re)
+      diag(sigma.mat) = sigma_re
+      gamma2 = mvrnorm(n=1, mu=rep(0, ncol(Z_k)), Sigma=sigma.mat)
+    }
     eps2 = rnorm(nrow(dataset), 0, sigma_eps)
-    dataset$y = as.matrix(dataset)[, 1:nvar] %*% beta + 
-      as.matrix(dataset)[, 1:nvar] %*% gamma2 +
+    dataset$y = f_0 + 
+      Z_0 %*% gamma2 +
       eps2
-    dataset$study=i
-    edat_sim_test[[i]] = dataset
+    dataset$study = k
+    edat_sim_test[[k]] = dataset
   }
   
   train = rbindlist(edat_sim)
@@ -123,14 +152,12 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
   
   # formula for linear models
   lm.formula = as.formula(paste("y~", paste(c(names(train)[ind.features], "0"), collapse="+")))
-  reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[cols_re], "0"), collapse="+")),
-                                       "|study"))
+  reStruct.formula = as.formula(paste(paste("~", paste(c(names(Z_train[[1]]), "0"), collapse="+")), "|study"))
   if (intercept) {
     lm.formula = as.formula(paste("y~", paste(c(names(train)[ind.features]), collapse="+")))
-    reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[setdiff(cols_re, 1)], "0"), collapse="+")),
-                                         "|study"))
+    reStruct.formula = as.formula(paste(paste("~", paste(c(names(Z_train[[1]])[-1], "0"), collapse="+")), "|study"))
     if (intercept_re) {
-      reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[setdiff(cols_re, 1)]), collapse="+")),
+      reStruct.formula = as.formula(paste(paste("~", paste(c(names(Z_train[[1]])[-1]), collapse="+")),
                                            "|study"))
     }
   }
@@ -155,6 +182,26 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
     fit.merged = lm(lm.formula, data=train)
     pred.merged = predict(fit.merged, newdata = test)
     pred.err$merged[1] = mean((pred.merged-test$y)^2)
+  }
+  
+  # CSL weights
+  wk.ols = wk
+  wk.ridge = wk
+  
+  # estimate optimal weights
+  if (opt_wk) {
+    f_train.pred = f_train
+    for (i in 1:length(f_train)) {
+      f_train.pred[[i]] = tryCatch(predict(fit.lme2, newdata = edat_train[[i]], level=0), error = function(e) rep(NA, nrow(edat_train[[i]])))
+    }
+    f_test.pred = f_test
+    for (i in 1:length(f_test)) {
+      f_test.pred[[i]] = tryCatch(predict(fit.lme2, newdata = edat_test[[i]], level=0), error = function(e) rep(NA, nrow(edat_test[[i]])))
+    }
+    wk.ols = optimal_weights_ridge(edat_train, edat_test, f_train.pred, f_test.pred, summary(fit.lme2)$sigma, sigma_re, 0)
+
+    wk.ridge = optimal_weights_ridge(edat_train, edat_test, f_train.pred, f_test.pred, summary(fit.lme2)$sigma, sigma_re, lambdak_ridge)
+    
   }
   
   # merged LASSO
@@ -281,10 +328,10 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
   
   # combine predictions across studies 
   if (ols) {
-    pred.err$csl[1] = mean((colWeightedMeans(ols.est, wk)-test$y)^2)
+    pred.err$csl[1] = mean((wk.ols %*% ols.est-test$y)^2)
   }
   pred.err$lasso.csl[1] = mean((colWeightedMeans(lasso.est, wk)-test$y)^2)
-  pred.err$ridge.csl[1] = mean((colWeightedMeans(ridge.est, wk)-test$y)^2)
+  pred.err$ridge.csl[1] = mean( (wk.ridge %*% ridge.est -test$y)^2)
   if (ranfor) {
     pred.err$rf.csl[1] = mean((colWeightedMeans(rf.est, wk)-test$y)^2)
   }
@@ -315,7 +362,7 @@ sim_rep = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
 ### function to calculate prediction error for various models across multiple replicates, given a value of sigma_re 
 # nreps: number of replicates
 # n_cores: number of cores for parallel computation
-sim_multi = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
+sim_multi_np = function(edat_train, edat_test, f_train, f_test, Z_train, Z_test, sigma_re, sigma_eps, wk,
                nreps=100,
                standardize=F,
                lambda_lasso=1, lambdak_lasso=1, 
@@ -325,205 +372,29 @@ sim_multi = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
                me=F, ma=F,
                ranfor=T, nn=T,
                ols=T, maxWeights=1000,
-               n_cores=16) {
+               n_cores=1, correlated_re=0, opt_wk=F) {
   
   registerDoMC(cores=n_cores)
   
   results = foreach (j=1:nreps, .combine=rbind) %dopar% {
-    sim_rep(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
-            standardize,
-            lambda_lasso, lambdak_lasso, 
-            lambda_ridge, lambdak_ridge, 
-            size, sizek, decay, decayk,
-            mtry, mtryk,
-            me, ma,
-            ranfor, nn,
-            ols, maxWeights)
+    sim_rep_np(edat_train=edat_train, edat_test=edat_test, f_train=f_train, f_test=f_test, Z_train=Z_train, Z_test=Z_test, 
+               sigma_re=sigma_re, 
+               sigma_eps=sigma_eps,
+               wk=wk,
+               standardize=standardize,
+               lambda_lasso=lambda_lasso, lambdak_lasso=lambdak_lasso,
+               lambda_ridge=lambda_ridge, lambdak_ridge=lambdak_ridge, 
+               size=size, sizek=sizek,
+               decay=decay, decayk=decayk,
+               mtry=mtry, mtryk=mtryk,
+               me=me, ma=ma, ranfor=ranfor, nn=nn, ols=ols, maxWeights=maxWeights,correlated_re=correlated_re, opt_wk=opt_wk)
+    
     
   }
   return(results)
 }
 
 
-### function to calculate prediction error for least squares and ridge regression for a given value of sigma_re
-# edat_train: list of design matrices for training datasets
-# edat_test: list of design matrices for test datasets 
-# beta: vector of coefficients
-# sigma_re: vector where entry i is the square root of the variance of the random effect for predictor i (if predictor i does not have a random effect, then set the corresponding entry to 0; can also provide a single number instead of the vector if all predictors have random effects with the same variance)
-# sigma_eps: square root of variance of residual errors
-# wk: vector of weights for CSL
-# standardize: TRUE if the predictors should be standardized before running ridge regression, FALSE otherwise
-# lambda_ridge: ridge regularization parameter for merged learner
-# lambdak_ridge: vector of ridge regularization parameters for single-study learners (can also provide a single number instead of a vector if this hyperparameter is the same for all studies)
-# opt_wk: TRUE if estimated optimal weights should be used for CSL
-sim_rep_weights = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
-                           standardize=F, 
-                           lambda_ridge=1, lambdak_ridge=1, opt_wk=T) {
-  
-  intercept = F
-  intercept_re = F
-  if (all(edat_train[[1]][,1]==1)) {
-    intercept = T
-    if (1 %in% cols_re) {
-      intercept_re = T
-    }
-  }
-  
-  pred.err = data.frame(lme2=NA, merged=NA, csl=NA,
-                        ridge.m=NA, ridge.csl=NA)
-  
-  nvar = ncol(edat_train[[1]])
-  
-  ind.features = 1:nvar
-  if (intercept) {
-    ind.features = 2:nvar
-  }
-  
-  # generate outcomes for training data
-  edat_sim = edat_train
-  for (i in 1:length(edat_train)) {
-    dataset = edat_train[[i]]
-    gamma = rnorm(nvar, 0, sigma_re)
-    eps = rnorm(nrow(dataset), 0, sigma_eps)
-    dataset$y = as.matrix(dataset)[, 1:nvar] %*% beta + 
-      as.matrix(dataset)[, 1:nvar] %*% gamma +
-      eps 
-    dataset$study = i
-    edat_sim[[i]] = dataset
-  }
-  
-  # generate outcomes for test data
-  edat_sim_test = edat_test
-  for (i in 1:length(edat_test)) {
-    dataset = edat_test[[i]]
-    gamma2 = rnorm(nvar, 0, sigma_re)
-    eps2 = rnorm(nrow(dataset), 0, sigma_eps)
-    dataset$y = as.matrix(dataset)[, 1:nvar] %*% beta + 
-      as.matrix(dataset)[, 1:nvar] %*% gamma2 +
-      eps2
-    dataset$study=i
-    edat_sim_test[[i]] = dataset
-  }
-  
-  train = rbindlist(edat_sim)
-  test = rbindlist(edat_sim_test)
-  
-  # formula for linear models
-  lm.formula = as.formula(paste("y~", paste(c(names(train)[ind.features], "0"), collapse="+")))
-  reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[cols_re], "0"), collapse="+")),
-                                      "|study"))
-  if (intercept) {
-    lm.formula = as.formula(paste("y~", paste(c(names(train)[ind.features]), collapse="+")))
-    reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[setdiff(cols_re, 1)], "0"), collapse="+")),
-                                        "|study"))
-    if (intercept_re) {
-      reStruct.formula = as.formula(paste(paste("~", paste(c(names(train)[setdiff(cols_re, 1)]), collapse="+")),
-                                          "|study"))
-    }
-  }
-  
-  # linear mixed effects model where random effects have equal variances
-  fit.lme2 = tryCatch(do.call(lme, list(lm.formula, data=train,
-                                        random=reStruct(reStruct.formula, pdClass="pdIdent"))),
-                      error = function(e) NA)
-  
-  pred.lme2 = tryCatch(predict(fit.lme2, newdata = test, level=0), error = function(e) rep(NA, nrow(test)))
-  pred.err$lme2[1] = mean((pred.lme2-test$y)^2)
-  
-  vec.re = rep(0, nvar)
-  vec.re[which(sigma_re>0)] = as.numeric(VarCorr(fit.lme2)[1,2])
-  
-  # CSL weights
-  wk.ols = wk
-  wk.ridge = wk
-  
-  
-  # merged OLS
-  fit.merged = lm(lm.formula, data=train)
-  pred.merged = predict(fit.merged, newdata = test)
-  pred.err$merged[1] = mean((pred.merged-test$y)^2)
-  
-  # estimate optimal weights
-  if (opt_wk) {
-    wk.ols = optimal_weights(edat_train, edat_test, summary(fit.lme2)$sigma, vec.re)
-    wk.ridge = optimal_weights_ridge(edat_train, edat_test, summary(fit.lme2)$sigma, vec.re, rep(lambdak.ridge, ndat), coef(fit.merged), scale_mat_k=scale_k_glmnet(edat_train))
-    
-  }
-  
-  
-  # merged ridge
-  # need to rescale lambda because of the formulation of the objective function used by glmnet
-  sd_y = sqrt(var(train$y)*(length(train$y)-1)/length(train$y))
-  fit.ridge = glmnet(as.matrix(train)[, ind.features], train$y, alpha = 0,
-                     lambda = lambda_ridge*sd_y/length(train$y),
-                     intercept=intercept,
-                     standardize=standardize)
-  pred.ridge = predict(fit.ridge, newx=as.matrix(test)[, ind.features])
-  pred.err$ridge.m[1] = mean((pred.ridge - test$y)^2)
-  
-  
-  lm.formula2 = as.formula(paste("y~", paste(c(names(train)[ind.features]), collapse="+")))
-  
-  
-  
-  ### cross-study learners
-  ols.est = matrix(data=NA, nrow=length(edat_sim), ncol=nrow(test))
-  ridge.est = matrix(data=NA, nrow=length(edat_sim), ncol=nrow(test))
-  
-  if (length(lambdak_ridge)==1) {
-    lambdak_ridge = rep(lambdak_ridge, length(edat_sim))
-  }
-  
-  for (i in 1:length(edat_sim)) {
-    
-    dataset = edat_sim[[i]]
-    
-    # OLS
-    fit = lm(lm.formula, data=dataset)
-    ols.est[i, ] = predict(fit, newdata = test)
-    
-    
-    # ridge
-    sd_y = sqrt(var(dataset$y)*(length(dataset$y)-1)/length(dataset$y))
-    fit.ridge = glmnet(as.matrix(dataset)[, ind.features], dataset$y, alpha = 0,
-                       lambda = lambdak_ridge[i]*sd_y/length(dataset$y),
-                       intercept=intercept,
-                       standardize=standardize)
-    pred.ridge = predict(fit.ridge, newx=as.matrix(test)[, ind.features])
-    ridge.est[i, ] = pred.ridge
-    
-    
-  }
-  
-  # combine predictions across studies 
-  pred.err$csl[1] = mean((colWeightedMeans(ols.est, wk.ols)-test$y)^2)
-  pred.err$ridge.csl[1] = mean((colWeightedMeans(ridge.est, wk.ridge)-test$y)^2)
-  
-  
-  return(pred.err)
-  
-}
-
-
-### function to calculate prediction error for least squares and ridge regression across multiple replicates, given a value of sigma_re 
-# nreps: number of replicates
-# n_cores: number of cores for parallel computation
-sim_multi_weights = function(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
-                             nreps=100,
-                             standardize=F,
-                             lambda_ridge=1, lambdak_ridge=1, 
-                             n_cores=16, opt_wk=T) {
-  
-  registerDoMC(cores=n_cores)
-  
-  results = foreach (j=1:nreps, .combine=rbind) %dopar% {
-    sim_rep_weights(edat_train, edat_test, beta, sigma_re, sigma_eps, wk,
-                    standardize,
-                    lambda_ridge, lambdak_ridge)
-    
-  }
-  return(results)
-}
 
 
 

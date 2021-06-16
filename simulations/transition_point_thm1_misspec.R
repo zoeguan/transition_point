@@ -2,15 +2,17 @@ source('transition_point_fns.R')
 source('sim_fns.R')
 load("hyperparams_thm1.RData")
 
+
+
 ### transition point for least squares
-# note: in the paper the scaling factor for the \overline{\sigma^2} is 1/P where P is the number of original predictors (ncol(edat_train_misspec[[1]])), but tau_range() uses 1/ncol(edat_train[[1]]), and here ncol(edat_train[[1]]) is the number of basis-expanded predictors, so sigma2_bar below should be multiplied by ncol(edat_train[[1]])/ncol(edat_train_misspec[[1]]) to be consistent with the paper
 sigma2_bar = tau_range(edat_train, edat_test, f_train, f_test, Z_train, lambda=0, lambdak=rep(0, length(edat_train)), sigma_eps=sigma_eps)
-sigma2_star = (nvar/ncol(Z_train[[1]]))*sigma2_bar
+sigma2_star = (ncol(edat_train_misspec[[1]])/ncol(Z_train[[1]]))*sigma2_bar
+
 
 
 ### transition point for ridge
-sigma2_bar.ridge = tau_range(edat_train, edat_test, f_train, f_test, Z_train, lambda=lambda.ridge, lambdak=rep(lambdak.ridge, length(edat_train)), sigma_eps=sigma_eps)
-sigma2_star.ridge = (nvar/ncol(Z_train[[1]]))*sigma2_bar.ridge
+sigma2_bar.ridge = tau_range(edat_train_misspec, edat_test_misspec, f_train, f_test, Z_train, lambda=lambda.ridge, lambdak=rep(lambdak.ridge, length(edat_train_misspec)), sigma_eps=sigma_eps)
+sigma2_star.ridge = (ncol(edat_train_misspec[[1]])/ncol(Z_train[[1]]))*sigma2_bar.ridge
 
 
 ### run simulations
@@ -32,7 +34,7 @@ for (j in ind) {
   print(j)
   sigmas = rep(sqrt(sigma.vals[j]), ncol(Z_train[[1]]))
 
-  results[[j]] = sim_multi_np(edat_train=edat_train, edat_test=edat_test, f_train=f_train, f_test=f_test, Z_train=Z_train, Z_test=Z_test, 
+  results[[j]] = sim_multi_np(edat_train=edat_train_misspec, edat_test=edat_test_misspec, f_train=f_train, f_test=f_test, Z_train=Z_train, Z_test=Z_test, 
                            sigma_re=sigmas, 
                            sigma_eps=sigma_eps,
                            wk=rep(1/ndat, ndat),
@@ -43,7 +45,7 @@ for (j in ind) {
                            mtry=mtry, mtryk=mtryk,
                            size=size, sizek=sizek,
                            decay=decay, decayk=decayk,
-                           me=F, ma=F, ranfor=T, nn=T, n_cores=8)
+                           me=T, ma=T, ranfor=F, nn=F, n_cores=4)
   err[j, ] = colMeans(results[[j]])
   print(err[j, ])
 }
@@ -51,9 +53,7 @@ for (j in ind) {
 
 save(err, results, sigma.vals, sigma2_bar, sigma2_star,
      sigma2_bar.ridge, sigma2_star.ridge,
-     file="transition_point_thm1.RData")
-
-
+     file="transition_point_thm1_misspec.RData")
 
 
 

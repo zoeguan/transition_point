@@ -8,9 +8,11 @@ sigma2_bar = tau_range(edat_train, edat_test, f_train, f_test, Z_train, lambda=0
 sigma2_star = (nvar/ncol(Z_train[[1]]))*sigma2_bar
 
 
+
 ### transition point for ridge
 sigma2_bar.ridge = tau_range(edat_train, edat_test, f_train, f_test, Z_train, lambda=lambda.ridge, lambdak=rep(lambdak.ridge, length(edat_train)), sigma_eps=sigma_eps)
 sigma2_star.ridge = (nvar/ncol(Z_train[[1]]))*sigma2_bar.ridge
+
 
 
 ### run simulations
@@ -43,7 +45,7 @@ for (j in ind) {
                            mtry=mtry, mtryk=mtryk,
                            size=size, sizek=sizek,
                            decay=decay, decayk=decayk,
-                           me=F, ma=F, ranfor=T, nn=T, n_cores=8)
+                           me=F, ma=F, ranfor=T, nn=T, n_cores=8, correlated_re=1)
   err[j, ] = colMeans(results[[j]])
   print(err[j, ])
 }
@@ -51,9 +53,7 @@ for (j in ind) {
 
 save(err, results, sigma.vals, sigma2_bar, sigma2_star,
      sigma2_bar.ridge, sigma2_star.ridge,
-     file="transition_point_thm1.RData")
-
-
+     file="transition_point_thm1_poscorr.RData")
 
 
 
