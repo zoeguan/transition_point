@@ -19,5 +19,5 @@
 - cholesterol_multi.Rnw: produce results for data application scenario 2
 
 # Instructions for Data Application
-- compile cholesterol_single.Rnw to generate cholesterol_single.pdf, which contains results for scenario 1 and Figure 3
-- compile cholesterol_multi.Rnw to generate cholesterol_multi.pdf, which contains results for scenario 2 and Figure 4
+- compile cholesterol_single.Rnw to generate cholesterol_single.pdf, which contains results for scenario 1 and Figure 2
+- compile cholesterol_multi.Rnw to generate cholesterol_multi.pdf, which contains results for scenario 2 and Figure 3
